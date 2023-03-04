@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import kotlin.coroutines.Continuation
@@ -25,7 +26,9 @@ fun main(args: Array<String>) {
 }
 
 @RestController
-class FooController {
+class FooController(
+    private val fooService: FooService
+) {
 
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -47,6 +50,36 @@ class FooController {
     suspend fun suspending(): String {
         delay(431)
         return "suspending function"
+    }
+
+    @GetMapping("/internalfunctioncall")
+    @Timed
+    suspend fun internalFunctionCall(): String {
+        delay(431)
+        foo()
+        return "internalfunctioncall"
+    }
+
+    @Timed
+    private suspend fun foo() {
+        delay(431)
+    }
+
+    @GetMapping("/externalfunctioncall")
+    @Timed
+    suspend fun externalFunctionCall(): String {
+        delay(431)
+        fooService.foo()
+        return "externalfunctioncall"
+    }
+}
+
+@Service
+class FooService {
+
+    @Timed
+    suspend fun foo() {
+        delay(431)
     }
 }
 
