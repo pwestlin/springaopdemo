@@ -56,12 +56,12 @@ class FooController(
     @Timed
     suspend fun internalFunctionCall(): String {
         delay(431)
-        foo()
+        timedFoo()
         return "internalfunctioncall"
     }
 
     @Timed
-    private suspend fun foo() {
+    private suspend fun timedFoo() {
         delay(431)
     }
 
